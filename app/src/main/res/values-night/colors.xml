@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<resources>
+    <color name="fofoca_rosa">#F477AD</color>
+    <color name="fofoca_fundo">#101014</color>
+    <color name="fofoca_texto">#FFF0F6</color>
+    <color name="fofoca_secundario">#BFA6B4</color>
+</resources>

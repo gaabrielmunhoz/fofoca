@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="fofoca_rosa">#E33D89</color>
+    <color name="fofoca_fundo">#FFF0F6</color>
+    <color name="fofoca_texto">#59223C</color>
+    <color name="fofoca_secundario">#986E84</color>
 </resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "790451093594",
+    "project_id": "fofoca-15785",
+    "storage_bucket": "fofoca-15785.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:790451093594:android:1c991b16bcb6f3893d9863",
+        "android_client_info": {
+          "package_name": "com.example.fofoca"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTzfHwAZq-gyirpCfa28X20twR8NI8HWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
