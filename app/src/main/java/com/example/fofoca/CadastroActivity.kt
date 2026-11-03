@@ -22,7 +22,7 @@ class CadastroActivity : AppCompatActivity() {
             view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        binding.tvVoltarLogin.SetOnClickListener {
+        binding.tvVoltarLogin.setOnClickListener {
             finish()
         }
     }
