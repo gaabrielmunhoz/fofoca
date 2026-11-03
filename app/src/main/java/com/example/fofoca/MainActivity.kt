@@ -62,6 +62,10 @@ class MainActivity : AppCompatActivity() {
 
             if (task.isSuccessful){
                 Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_LONG).show()
+
+                val intent = Intent(this, FeedActivity::class.java)
+                startActivity(intent)
+                finish()
             } else {
                 Toast.makeText(this, "não foi possível entrar. Verifique seu e-mail e senha.", Toast.LENGTH_LONG).show()
             }
