@@ -1,19 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/fofoca_fundo"
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:padding="28dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fofoca."
+            android:textSize="52sp"
+            android:textStyle="bold"
+            android:textColor="@color/fofoca_rosa"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Todo mundo tem algo pra contar."
+            android:textSize="14sp"
+            android:textColor="@color/fofoca_secundario"
+            android:gravity="center"
+            android:layout_marginBottom="56dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bem-vindo de volta!"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/fofoca_texto" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Entre para ficar por dentro"
+            android:textSize="14sp"
+            android:textColor="@color/fofoca_secundario"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="56dp"/>
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="E-mail"
+            android:inputType="textEmailAddress"
+            android:singleLine="true"
+            android:padding="12dp"
+            android:textColor="@color/fofoca_secundario"
+            android:backgroundTint="@color/fofoca_rosa"/>
+
+        <EditText
+            android:id="@+id/etSenha"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Senha"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            android:padding="12dp"
+            android:textColor="@color/fofoca_secundario"
+            android:backgroundTint="@color/fofoca_rosa"
+            android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/btnEntrar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Entrar"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/fofoca_rosa"
+            android:layout_marginTop="32dp"/>
+
+        <TextView
+            android:id="@+id/tvCadastrar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Ainda não tem conta? Cadastre-se"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            android:textColor="@color/fofoca_rosa"
+            android:gravity="center"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
+
+</ScrollView>
