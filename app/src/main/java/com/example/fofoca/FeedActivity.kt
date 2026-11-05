@@ -58,7 +58,7 @@ class FeedActivity : AppCompatActivity() {
             Post(
                 id = "3",
                 autor = "Marina Souza",
-                usuario = "pedrolima",
+                usuario = "marinasouza",
                 conteudo = "Alguém mais esperando o fim do semestre? Porque eu já estou para enlouquecer!.",
                 curtidas = 42,
                 comentarios = 12
