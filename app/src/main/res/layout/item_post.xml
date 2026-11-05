@@ -27,7 +27,7 @@
             android:textColor="@color/fofoca_texto"/>
 
         <TextView
-            android:id="@+id/tvUsuário"
+            android:id="@+id/tvUsuario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="\@usuario"
