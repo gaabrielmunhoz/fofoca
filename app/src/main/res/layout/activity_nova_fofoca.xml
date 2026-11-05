@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fofoca_fundo"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nova Fofoca"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/fofoca_rosa"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Conta tudo! O que está acontecendo?"
+            android:textSize="15sp"
+            android:textColor="@color/fofoca_secundario"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"/>
+
+        <EditText
+            android:id="@+id/etConteudo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="top"
+            android:padding="16dp"
+            android:hint="Escreva sua fofoca aqui..."
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLength="500"
+            android:textSize="16sp"
+            android:textColor="@color/fofoca_texto"
+            android:textColorHint="@color/fofoca_secundario"
+            android:backgroundTint="@color/fofoca_rosa"/>
+
+        <Button
+            android:id="@+id/btnPublicar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:text="Publicar Fofoca"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/fofoca_rosa"/>
+
+        <TextView
+            android:id="@+id/tvCancelar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="Cancelar"
+            android:textStyle="bold"
+            android:textColor="@color/fofoca_rosa"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+</ScrollView>

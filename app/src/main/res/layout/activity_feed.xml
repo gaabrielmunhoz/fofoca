@@ -68,4 +68,14 @@
 
     </FrameLayout>
 
+    <Button
+        android:id="@+id/btnNovaFofoca"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:text="Nova fofoca"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/fofoca_rosa"/>
+
 </LinearLayout>

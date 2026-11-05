@@ -73,6 +73,11 @@ class FeedActivity : AppCompatActivity() {
             auth.signOut()
             voltarParaLogin()
         }
+
+        binding.btnNovaFofoca.setOnClickListener {
+            val intent = Intent(this, NovaFofocaActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun voltarParaLogin(){
