@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/fofoca_secundario"
+    app:cardBackgroundColor="@color/fofoca_fundo">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvAutor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nome do autor"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="@color/fofoca_texto"/>
+
+        <TextView
+            android:id="@+id/tvUsuário"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\@usuário"
+            android:textSize="16sp"
+            android:textColor="@color/fofoca_secundario"
+            android:layout_marginTop="2dp"/>
+
+        <TextView
+            android:id="@+id/tvConteudo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Conteúdo da fofoca"
+            android:textSize="16sp"
+            android:textColor="@color/fofoca_texto"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvCurtidas"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 curtidas"
+                android:textSize="13sp"
+                android:textColor="@color/fofoca_secundario"/>
+
+            <TextView
+                android:id="@+id/tvComentarios"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 comentários"
+                android:textSize="13sp"
+                android:textColor="@color/fofoca_secundario"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</com.google.android.material.card.MaterialCardView>
