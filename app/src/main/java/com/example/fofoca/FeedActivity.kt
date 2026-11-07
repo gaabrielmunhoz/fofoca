@@ -46,7 +46,7 @@ class FeedActivity : AppCompatActivity() {
         }
 
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
-        binding.rvPosts.adapter = PostAdapter(emptyList(), auth.currentUser?.uid.orEmpty()) {
+        binding.rvPosts.adapter = PostAdapter(emptyList(), auth.currentUser?.uid.orEmpty(), ::editarPost, ::excluirPost) {
             post -> editarPost(post)
         }
 
@@ -87,7 +87,7 @@ class FeedActivity : AppCompatActivity() {
                     )
                 }
 
-                binding.rvPosts.adapter = PostAdapter(posts, auth.currentUser?.uid.orEmpty()) {
+                binding.rvPosts.adapter = PostAdapter(posts, auth.currentUser?.uid.orEmpty(),::editarPost, ::excluirPost) {
                     post -> editarPost(post)
                 }
 
@@ -153,6 +153,28 @@ class FeedActivity : AppCompatActivity() {
                     Toast.makeText(this, "Erro ao editar: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
                 }
         }
+    }
+
+    private fun excluirPost(post: Post) {
+        if(post.autorId != auth.currentUser?.uid) return
+
+        AlertDialog.Builder(this)
+            .setTitle("Excluir fofoca?")
+            .setMessage("Esta ação não pode ser desfeita.")
+            .setNegativeButton("Cancelar",null)
+            .setPositiveButton("Excluir") { _, _ ->
+                db.collection("posts")
+                    .document(post.id)
+                    .delete()
+                    .addOnSuccessListener {
+                        carregarPosts()
+                        Toast.makeText(this, "Fofoca excluída!", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { erro->
+                        Toast.makeText(this, "Erro ao excluir: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
+                    }
+            }
+            .show()
     }
 
     private fun voltarParaLogin(){

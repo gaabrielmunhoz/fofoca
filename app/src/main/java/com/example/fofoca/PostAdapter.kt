@@ -9,7 +9,8 @@ import android.view.View
 class PostAdapter (
     private val posts: List<Post>,
     private val uidLogado: String,
-    private val aoEditar: (Post) -> Unit
+    private val aoEditar: (Post) -> Unit,
+    private val aoExcluir: (Post) -> Unit
 
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
@@ -42,11 +43,26 @@ class PostAdapter (
             } else {
                 View.GONE
             }
+
         holder.binding.tvEditar.setOnClickListener {
             if (post.autorId == uidLogado) {
                 aoEditar(post)
             }
         }
+
+        holder.binding.tvExcluir.visibility =
+            if (post.autorId == uidLogado) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
+        holder.binding.tvExcluir.setOnClickListener {
+            if (post.autorId == uidLogado) {
+                aoExcluir(post)
+            }
+        }
+
     }
 
     override fun getItemCount(): Int {
