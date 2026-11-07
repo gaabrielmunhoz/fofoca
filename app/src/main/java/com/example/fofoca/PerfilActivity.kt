@@ -17,6 +17,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import java.util.Locale
+import android.text.InputType
+import com.google.firebase.auth.EmailAuthProvider
 
 class PerfilActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,8 @@ class PerfilActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvEditarPerfil).setOnClickListener {
             editarPerfil()
         }
+
+        findViewById<TextView>(R.id.tvAlterarSenha).setOnClickListener { alterarSenha() }
 
         val usuarioAtual = FirebaseAuth.getInstance().currentUser
 
@@ -81,14 +85,14 @@ class PerfilActivity : AppCompatActivity() {
 
         val campoNome = EditText(this).apply {
             hint = "Nome"
-            setText(findViewById<TextView>(R.id.tvNomePerfil).text)
+            setText(this@PerfilActivity.findViewById<TextView>(R.id.tvNomePerfil).text)
             setSingleLine(true)
         }
 
         val campoUsuario = EditText(this).apply {
             hint = "Nome de usuário"
             setText(
-                findViewById<TextView>(R.id.tvUsuarioPerfil)
+                this@PerfilActivity.findViewById<TextView>(R.id.tvUsuarioPerfil)
                     .text.toString().removePrefix("@")
             )
             setSingleLine(true)
@@ -163,6 +167,107 @@ class PerfilActivity : AppCompatActivity() {
                         "Erro ao atualizar: ${erro.localizedMessage}",
                         Toast.LENGTH_LONG
                     ).show()
+                }
+        }
+    }
+
+
+    private fun alterarSenha() {
+
+        val usuario = FirebaseAuth.getInstance().currentUser ?: return
+        val email = usuario.email ?: return
+
+        val senhaAtual = EditText(this).apply {
+            hint = "Senha atual"
+            inputType = InputType.TYPE_CLASS_TEXT or
+                    InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+        val novaSenha = EditText(this).apply {
+            hint = "Nova senha"
+            inputType = InputType.TYPE_CLASS_TEXT or
+                    InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+        val confirmarSenha = EditText(this).apply {
+            hint = "Confirmar nova senha"
+            inputType = InputType.TYPE_CLASS_TEXT or
+                    InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+        val campos = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(32, 16, 32, 8)
+            addView(senhaAtual)
+            addView(novaSenha)
+            addView(confirmarSenha)
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Alterar senha")
+            .setView(campos)
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Salvar", null)
+            .create()
+
+        dialog.show()
+
+        val botaoSalvar = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+
+        botaoSalvar.setOnClickListener {
+
+            val atual = senhaAtual.text.toString()
+            val nova = novaSenha.text.toString()
+            val confirmacao = confirmarSenha.text.toString()
+
+            if (atual.isEmpty()) {
+                senhaAtual.error = "Informe sua senha atual"
+                return@setOnClickListener
+            }
+
+            if (nova.length < 6) {
+                novaSenha.error = "Use pelo menos 6 caracteres"
+                return@setOnClickListener
+            }
+
+            if (nova != confirmacao) {
+                confirmarSenha.error = "As senhas não coincidem"
+                return@setOnClickListener
+            }
+
+            botaoSalvar.isEnabled = false
+
+            val credencial = EmailAuthProvider.getCredential(
+                email,
+                atual
+            )
+
+            usuario.reauthenticate(credencial)
+                .addOnSuccessListener {
+
+                    usuario.updatePassword(nova)
+                        .addOnSuccessListener {
+                            dialog.dismiss()
+
+                            Toast.makeText(
+                                this,
+                                "Senha alterada com sucesso!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        .addOnFailureListener { erro ->
+                            botaoSalvar.isEnabled = true
+
+                            Toast.makeText(
+                                this,
+                                "Erro ao alterar senha: ${erro.localizedMessage}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                }
+                .addOnFailureListener {
+                    botaoSalvar.isEnabled = true
+                    senhaAtual.error = "Senha atual incorreta ou autenticação falhou"
                 }
         }
     }
