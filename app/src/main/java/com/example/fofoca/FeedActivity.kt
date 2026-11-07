@@ -47,7 +47,7 @@ class FeedActivity : AppCompatActivity() {
 
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
         binding.rvPosts.adapter = PostAdapter(emptyList(), auth.currentUser?.uid.orEmpty(), ::editarPost, ::excluirPost,
-            ::alternarCurtida)
+            ::alternarCurtida, :: abrirComentarios)
 
         binding.tvSair.setOnClickListener {
             auth.signOut()
@@ -110,7 +110,8 @@ class FeedActivity : AppCompatActivity() {
                                     auth.currentUser?.uid.orEmpty(),
                                     ::editarPost,
                                     ::excluirPost,
-                                    ::alternarCurtida
+                                    ::alternarCurtida,
+                                    ::abrirComentarios
                                 )
                             }
                         }
@@ -227,6 +228,13 @@ class FeedActivity : AppCompatActivity() {
             .addOnFailureListener { erro ->
                 Toast.makeText(this, "Erro ao verificar curtida: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun abrirComentarios(post: Post){
+        val intent = Intent(this, ComentariosActivity::class.java)
+
+        intent.putExtra("POST_ID", post.id)
+        startActivity(intent)
     }
 
     private fun voltarParaLogin(){
