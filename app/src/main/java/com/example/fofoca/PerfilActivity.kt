@@ -13,6 +13,10 @@ import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import android.widget.EditText
+import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
+import java.util.Locale
 
 class PerfilActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +32,10 @@ class PerfilActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.tvVoltarPerfil).setOnClickListener {
             finish()
+        }
+
+        findViewById<TextView>(R.id.tvEditarPerfil).setOnClickListener {
+            editarPerfil()
         }
 
         val usuarioAtual = FirebaseAuth.getInstance().currentUser
@@ -65,6 +73,101 @@ class PerfilActivity : AppCompatActivity() {
 
 
     }
+
+
+    private fun editarPerfil() {
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val campoNome = EditText(this).apply {
+            hint = "Nome"
+            setText(findViewById<TextView>(R.id.tvNomePerfil).text)
+            setSingleLine(true)
+        }
+
+        val campoUsuario = EditText(this).apply {
+            hint = "Nome de usuário"
+            setText(
+                findViewById<TextView>(R.id.tvUsuarioPerfil)
+                    .text.toString().removePrefix("@")
+            )
+            setSingleLine(true)
+        }
+
+        val campos = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(32, 16, 32, 8)
+            addView(campoNome)
+            addView(campoUsuario)
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Editar perfil")
+            .setView(campos)
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Salvar", null)
+            .create()
+
+        dialog.show()
+
+        val botaoSalvar = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+
+        botaoSalvar.setOnClickListener {
+
+            val nome = campoNome.text.toString().trim()
+            val usuario = campoUsuario.text.toString()
+                .trim()
+                .removePrefix("@")
+                .lowercase(Locale.ROOT)
+
+            if (nome.isBlank()) {
+                campoNome.error = "Informe seu nome"
+                return@setOnClickListener
+            }
+
+            if (!usuario.matches(Regex("^[a-z0-9._]{3,20}$"))) {
+                campoUsuario.error = "Use 3 a 20 caracteres: letras, números, . ou _"
+                return@setOnClickListener
+            }
+
+            botaoSalvar.isEnabled = false
+
+            FirebaseFirestore.getInstance()
+                .collection("usuarios")
+                .document(uid)
+                .update(
+                    mapOf(
+                        "nome" to nome,
+                        "usuario" to usuario
+                    )
+                )
+                .addOnSuccessListener {
+
+                    findViewById<TextView>(R.id.tvNomePerfil).text = nome
+                    findViewById<TextView>(R.id.tvUsuarioPerfil).text =
+                        "@$usuario"
+
+                    dialog.dismiss()
+
+                    Toast.makeText(
+                        this,
+                        "Perfil atualizado!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .addOnFailureListener { erro ->
+                    botaoSalvar.isEnabled = true
+
+                    Toast.makeText(
+                        this,
+                        "Erro ao atualizar: ${erro.localizedMessage}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+        }
+    }
+
+
     private fun carregarPostsPerfil(uid: String) {
 
         FirebaseFirestore.getInstance()

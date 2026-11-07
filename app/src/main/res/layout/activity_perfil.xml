@@ -51,6 +51,18 @@
         android:textSize="14sp"
         android:textColor="@color/fofoca_secundario"/>
 
+    <TextView
+        android:id="@+id/tvEditarPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
+        android:text="Editar perfil"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="@color/fofoca_rosa"/>
+
 
     <TextView
         android:layout_width="match_parent"
