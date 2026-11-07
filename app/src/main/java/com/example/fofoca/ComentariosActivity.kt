@@ -12,6 +12,9 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FieldValue
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.Query
 
 class ComentariosActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +32,9 @@ class ComentariosActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvVoltar).setOnClickListener {
             finish()
         }
+
+        findViewById<RecyclerView>(R.id.rvComentarios).layoutManager = LinearLayoutManager(this)
+        carregarComentarios(postId)
 
         findViewById<Button>(R.id.btnEnviar).setOnClickListener { publicarComentario(postId) }
 
@@ -89,6 +95,7 @@ class ComentariosActivity : AppCompatActivity() {
                     .add(dados)
                     .addOnSuccessListener {
                         campo.text.clear()
+                        carregarComentarios(postId)
                         botao.isEnabled = true
                         Toast.makeText(this, "Comentário publicado!", Toast.LENGTH_SHORT).show()
                     }
@@ -100,6 +107,29 @@ class ComentariosActivity : AppCompatActivity() {
             .addOnFailureListener { erro->
                 botao.isEnabled = true
                 Toast.makeText(this, "Erro ao buscar perfil: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun carregarComentarios(postId: String) {
+        FirebaseFirestore.getInstance()
+            .collection("posts")
+            .document(postId)
+            .collection("comentarios")
+            .orderBy("criadoEm", Query.Direction.ASCENDING)
+            .get()
+            .addOnSuccessListener { resultado ->
+                val comentarios = resultado.documents.map {documento->
+                    Comentario(
+                        autor = documento.getString("autor") ?: "",
+                        usuario = documento.getString("usuario") ?: "",
+                        conteudo = documento.getString("conteudo") ?: "",
+                    )
+                }
+
+                findViewById<RecyclerView>(R.id.rvComentarios).adapter = ComentarioAdapter(comentarios)
+            }
+            .addOnFailureListener { erro->
+                Toast.makeText(this, "Erro ao carregar comentários: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
             }
     }
 }

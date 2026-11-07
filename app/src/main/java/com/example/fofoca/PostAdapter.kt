@@ -54,7 +54,7 @@ class PostAdapter (
 
         holder.binding.tvCurtidas.setOnClickListener { aoCurtir(post) }
 
-        holder.binding.tvComentarios.text = "${post.comentarios} comentários"
+        holder.binding.tvComentarios.text = "Ver comentários"
         holder.binding.tvComentarios.setOnClickListener { aoComentar(post) }
 
         holder.binding.tvEditar.visibility =
