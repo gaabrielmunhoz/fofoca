@@ -26,7 +26,7 @@
         android:textColor="@color/fofoca_texto"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tvComentarios"
+        android:id="@+id/rvComentarios"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
