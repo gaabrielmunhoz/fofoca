@@ -7,5 +7,6 @@ data class Post(
     val usuario: String = "",
     val conteudo: String = "",
     val curtidas: Int = 0,
-    val comentarios: Int = 0
+    val comentarios: Int = 0,
+    val curtiu: Boolean = false
 )

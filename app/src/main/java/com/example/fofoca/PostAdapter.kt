@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fofoca.databinding.ItemPostBinding
 import android.view.View
+import androidx.core.content.ContextCompat
 
 class PostAdapter (
     private val posts: List<Post>,
@@ -35,7 +36,21 @@ class PostAdapter (
         holder.binding.tvAutor.text = post.autor
         holder.binding.tvUsuario.text = "@${post.usuario}"
         holder.binding.tvConteudo.text = post.conteudo
-        holder.binding.tvCurtidas.text = "${post.curtidas} curtidas"
+
+        holder.binding.tvCurtidas.text = if (post.curtiu){
+            "Curtido • ${post.curtidas} curtidas"
+        } else{
+            "${post.curtidas} curtidas"
+        }
+
+        holder.binding.tvCurtidas.setTextColor(
+            ContextCompat.getColor(
+                holder.itemView.context,
+                if (post.curtiu) R.color.fofoca_rosa
+                else R.color.fofoca_secundario
+            )
+        )
+
         holder.binding.tvCurtidas.setOnClickListener { aoCurtir(post) }
         holder.binding.tvComentarios.text = "${post.comentarios} comentários"
 

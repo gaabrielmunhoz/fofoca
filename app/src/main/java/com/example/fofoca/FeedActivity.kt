@@ -95,7 +95,12 @@ class FeedActivity : AppCompatActivity() {
                         .collection("curtidas")
                         .get()
                         .addOnSuccessListener { resultadoCurtidas ->
-                            postsComCurtidas[indice] = post.copy(curtidas = resultadoCurtidas.size())
+                            postsComCurtidas[indice] = post.copy(
+                                curtidas = resultadoCurtidas.size(),
+                                curtiu = resultadoCurtidas.documents.any {
+                                    it.id == auth.currentUser?.uid
+                                }
+                            )
                         }
                         .addOnCompleteListener {
                             consultasPendentes--
