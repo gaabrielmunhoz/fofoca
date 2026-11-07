@@ -70,6 +70,19 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tvEditar"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="Editar"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/fofoca_rosa"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 

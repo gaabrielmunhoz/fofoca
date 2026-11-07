@@ -4,9 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fofoca.databinding.ItemPostBinding
+import android.view.View
 
 class PostAdapter (
-    private val posts: List<Post>
+    private val posts: List<Post>,
+    private val uidLogado: String
+
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     class PostViewHolder(
@@ -31,6 +34,13 @@ class PostAdapter (
         holder.binding.tvConteudo.text = post.conteudo
         holder.binding.tvCurtidas.text = "${post.curtidas} curtidas"
         holder.binding.tvComentarios.text = "${post.comentarios} comentários"
+
+        holder.binding.tvEditar.visibility =
+            if (post.autorId == uidLogado) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
     }
 
     override fun getItemCount(): Int {

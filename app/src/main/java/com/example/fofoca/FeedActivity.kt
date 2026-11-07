@@ -43,7 +43,7 @@ class FeedActivity : AppCompatActivity() {
         }
 
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
-        binding.rvPosts.adapter = PostAdapter(emptyList())
+        binding.rvPosts.adapter = PostAdapter(emptyList(), auth.currentUser?.uid.orEmpty())
 
         binding.tvSair.setOnClickListener {
             auth.signOut()
@@ -82,7 +82,7 @@ class FeedActivity : AppCompatActivity() {
                     )
                 }
 
-                binding.rvPosts.adapter = PostAdapter(posts)
+                binding.rvPosts.adapter = PostAdapter(posts, auth.currentUser?.uid.orEmpty())
 
                 if (posts.isEmpty()) {
                     binding.tvVazio.text = "Ainda não há fofocas aqui."
