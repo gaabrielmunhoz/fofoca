@@ -16,6 +16,7 @@ import com.google.firebase.firestore.Query
 import android.widget.EditText
 import android.text.InputFilter
 import androidx.appcompat.app.AlertDialog
+import java.util.Locale
 
 class FeedActivity : AppCompatActivity() {
 
@@ -58,6 +59,8 @@ class FeedActivity : AppCompatActivity() {
             val intent = Intent(this, PerfilActivity::class.java)
             startActivity(intent)
         }
+
+        binding.tvBuscar.setOnClickListener { buscarUsuarios() }
 
         binding.btnNovaFofoca.setOnClickListener {
             val intent = Intent(this, NovaFofocaActivity::class.java)
@@ -241,6 +244,76 @@ class FeedActivity : AppCompatActivity() {
         intent.putExtra("POST_ID", post.id)
         startActivity(intent)
     }
+
+
+    private fun buscarUsuarios() {
+
+        val campo = EditText(this).apply {
+            hint = "Digite o @usuário"
+            setSingleLine(true)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Buscar usuários")
+            .setView(campo)
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Buscar") { _, _ ->
+
+                val termo = campo.text.toString()
+                    .trim()
+                    .removePrefix("@")
+                    .lowercase(Locale.ROOT)
+
+                if (termo.isBlank()) {
+                    Toast.makeText(
+                        this,
+                        "Digite um nome de usuário",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+
+                    db.collection("usuarios_publicos")
+                        .orderBy("usuario")
+                        .startAt(termo)
+                        .endAt(termo + "\uf8ff")
+                        .limit(20)
+                        .get()
+                        .addOnSuccessListener { resultado ->
+
+                            if (resultado.isEmpty) {
+                                Toast.makeText(
+                                    this,
+                                    "Nenhum usuário encontrado",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+
+                                val nomes = resultado.documents.map { doc ->
+                                    val nome = doc.getString("nome") ?: ""
+                                    val usuario = doc.getString("usuario") ?: ""
+
+                                    "$nome (@$usuario)"
+                                }
+
+                                AlertDialog.Builder(this)
+                                    .setTitle("Usuários encontrados")
+                                    .setMessage(nomes.joinToString("\n\n"))
+                                    .setPositiveButton("Fechar", null)
+                                    .show()
+                            }
+                        }
+                        .addOnFailureListener { erro ->
+                            Toast.makeText(
+                                this,
+                                "Erro na busca: ${erro.localizedMessage}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                }
+            }
+            .show()
+    }
+
 
     private fun voltarParaLogin(){
         val intent = Intent(this, MainActivity::class.java)
