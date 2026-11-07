@@ -46,7 +46,8 @@ class FeedActivity : AppCompatActivity() {
         }
 
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
-        binding.rvPosts.adapter = PostAdapter(emptyList(), auth.currentUser?.uid.orEmpty(), ::editarPost, ::excluirPost)
+        binding.rvPosts.adapter = PostAdapter(emptyList(), auth.currentUser?.uid.orEmpty(), ::editarPost, ::excluirPost,
+            ::alternarCurtida)
 
         binding.tvSair.setOnClickListener {
             auth.signOut()
@@ -85,7 +86,8 @@ class FeedActivity : AppCompatActivity() {
                     )
                 }
 
-                binding.rvPosts.adapter = PostAdapter(posts, auth.currentUser?.uid.orEmpty(),::editarPost, ::excluirPost)
+                binding.rvPosts.adapter = PostAdapter(posts, auth.currentUser?.uid.orEmpty(),::editarPost, ::excluirPost,
+                    ::alternarCurtida)
 
                 if (posts.isEmpty()) {
                     binding.tvVazio.text = "Ainda não há fofocas aqui."
@@ -171,6 +173,32 @@ class FeedActivity : AppCompatActivity() {
                     }
             }
             .show()
+    }
+
+    private fun alternarCurtida(post: Post){
+        val uid = auth.currentUser?.uid ?: return
+
+        val curtidaRef = db.collection("posts")
+            .document(post.id)
+            .collection("curtidas")
+            .document(uid)
+
+        curtidaRef.get().addOnSuccessListener { documento ->
+            val operacao = if (documento.exists()) {
+                curtidaRef.delete()
+            } else {
+                curtidaRef.set(mapOf("uid" to uid))
+            }
+
+            operacao.addOnSuccessListener {
+                Toast.makeText(this, "Curtida atualizada!", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener { erro ->
+                Toast.makeText(this, "Erro: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+        }
+            .addOnFailureListener { erro ->
+                Toast.makeText(this, "Erro ao verificar curtida: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
     }
 
     private fun voltarParaLogin(){

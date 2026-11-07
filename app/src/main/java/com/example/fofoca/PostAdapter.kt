@@ -10,7 +10,8 @@ class PostAdapter (
     private val posts: List<Post>,
     private val uidLogado: String,
     private val aoEditar: (Post) -> Unit,
-    private val aoExcluir: (Post) -> Unit
+    private val aoExcluir: (Post) -> Unit,
+    private val aoCurtir: (Post) -> Unit
 
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
@@ -35,6 +36,7 @@ class PostAdapter (
         holder.binding.tvUsuario.text = "@${post.usuario}"
         holder.binding.tvConteudo.text = post.conteudo
         holder.binding.tvCurtidas.text = "${post.curtidas} curtidas"
+        holder.binding.tvCurtidas.setOnClickListener { aoCurtir(post) }
         holder.binding.tvComentarios.text = "${post.comentarios} comentários"
 
         holder.binding.tvEditar.visibility =
