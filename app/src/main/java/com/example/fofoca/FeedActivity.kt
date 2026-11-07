@@ -86,8 +86,30 @@ class FeedActivity : AppCompatActivity() {
                     )
                 }
 
-                binding.rvPosts.adapter = PostAdapter(posts, auth.currentUser?.uid.orEmpty(),::editarPost, ::excluirPost,
-                    ::alternarCurtida)
+                val postsComCurtidas = posts.toMutableList()
+                var consultasPendentes = posts.size
+
+                posts.forEachIndexed { indice, post ->
+                    db.collection("posts")
+                        .document(post.id)
+                        .collection("curtidas")
+                        .get()
+                        .addOnSuccessListener { resultadoCurtidas ->
+                            postsComCurtidas[indice] = post.copy(curtidas = resultadoCurtidas.size())
+                        }
+                        .addOnCompleteListener {
+                            consultasPendentes--
+                            if (consultasPendentes == 0) {
+                                binding.rvPosts.adapter = PostAdapter(
+                                    postsComCurtidas,
+                                    auth.currentUser?.uid.orEmpty(),
+                                    ::editarPost,
+                                    ::excluirPost,
+                                    ::alternarCurtida
+                                )
+                            }
+                        }
+                }
 
                 if (posts.isEmpty()) {
                     binding.tvVazio.text = "Ainda não há fofocas aqui."
@@ -192,6 +214,7 @@ class FeedActivity : AppCompatActivity() {
 
             operacao.addOnSuccessListener {
                 Toast.makeText(this, "Curtida atualizada!", Toast.LENGTH_SHORT).show()
+                carregarPosts()
             }.addOnFailureListener { erro ->
                 Toast.makeText(this, "Erro: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
             }
