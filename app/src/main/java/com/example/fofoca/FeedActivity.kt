@@ -13,6 +13,9 @@ import com.example.fofoca.databinding.ActivityFeedBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import android.widget.EditText
+import android.text.InputFilter
+import androidx.appcompat.app.AlertDialog
 
 class FeedActivity : AppCompatActivity() {
 
@@ -43,7 +46,9 @@ class FeedActivity : AppCompatActivity() {
         }
 
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
-        binding.rvPosts.adapter = PostAdapter(emptyList(), auth.currentUser?.uid.orEmpty())
+        binding.rvPosts.adapter = PostAdapter(emptyList(), auth.currentUser?.uid.orEmpty()) {
+            post -> editarPost(post)
+        }
 
         binding.tvSair.setOnClickListener {
             auth.signOut()
@@ -82,7 +87,9 @@ class FeedActivity : AppCompatActivity() {
                     )
                 }
 
-                binding.rvPosts.adapter = PostAdapter(posts, auth.currentUser?.uid.orEmpty())
+                binding.rvPosts.adapter = PostAdapter(posts, auth.currentUser?.uid.orEmpty()) {
+                    post -> editarPost(post)
+                }
 
                 if (posts.isEmpty()) {
                     binding.tvVazio.text = "Ainda não há fofocas aqui."
@@ -100,6 +107,52 @@ class FeedActivity : AppCompatActivity() {
 
                 Toast.makeText(this, "Erro: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun editarPost(post: Post){
+        if(post.autorId != auth.currentUser?.uid) return
+
+        val campo = EditText(this).apply {
+            setText(post.conteudo)
+            setSelection(text.length)
+            filters = arrayOf(InputFilter.LengthFilter(500))
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Editar fofoca")
+            .setView(campo)
+            .setNegativeButton("Cancelar",null)
+            .setPositiveButton("Salvar",null)
+            .create()
+        dialog.show()
+
+        val botaoSalvar = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+
+        botaoSalvar.setOnClickListener {
+            val novoTexto = campo.text.toString().trim()
+
+            if (novoTexto.isEmpty()){
+                campo.error = "A fofoca não pode ficar vazia"
+                return@setOnClickListener
+            }
+
+            botaoSalvar.isEnabled = false
+
+            db.collection("posts")
+                .document(post.id)
+                .update("conteudo", novoTexto)
+                .addOnSuccessListener {
+                    dialog.dismiss()
+                    carregarPosts()
+
+                    Toast.makeText(this, "Fofoca atualizada!", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { erro ->
+                    botaoSalvar.isEnabled = true
+
+                    Toast.makeText(this, "Erro ao editar: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
+                }
+        }
     }
 
     private fun voltarParaLogin(){
