@@ -201,6 +201,8 @@ class PerfilActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.tvUsuarioPerfil).text =
                         "@$usuario"
 
+                    sincronizarAutorPosts(uid, nome, usuario)
+
                     sincronizarPerfilPublico(uid,nome,usuario)
 
                     dialog.dismiss()
@@ -442,6 +444,60 @@ class PerfilActivity : AppCompatActivity() {
                 Toast.makeText(
                     this,
                     "Erro ao sincronizar perfil: ${erro.localizedMessage}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+    }
+
+
+    private fun sincronizarAutorPosts(
+        uid: String,
+        nome: String,
+        usuario: String
+    ) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("posts")
+            .whereEqualTo("autorId", uid)
+            .get()
+            .addOnSuccessListener { resultado ->
+
+                if (resultado.isEmpty) return@addOnSuccessListener
+
+                val lote = db.batch()
+
+                resultado.documents.forEach { documento ->
+                    lote.update(
+                        documento.reference,
+                        mapOf(
+                            "autor" to nome,
+                            "usuario" to usuario
+                        )
+                    )
+                }
+
+                lote.commit()
+                    .addOnSuccessListener {
+                        carregarPostsPerfil(uid)
+
+                        Toast.makeText(
+                            this,
+                            "Publicações atualizadas!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    .addOnFailureListener { erro ->
+                        Toast.makeText(
+                            this,
+                            "Erro ao atualizar posts: ${erro.localizedMessage}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+            }
+            .addOnFailureListener { erro ->
+                Toast.makeText(
+                    this,
+                    "Erro ao buscar posts: ${erro.localizedMessage}",
                     Toast.LENGTH_LONG
                 ).show()
             }
