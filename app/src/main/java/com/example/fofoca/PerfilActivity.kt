@@ -69,6 +69,18 @@ class PerfilActivity : AppCompatActivity() {
 
                 findViewById<TextView>(R.id.tvUsuarioPerfil).text =
                     "@${documento.getString("usuario") ?: ""}"
+
+                val nomePublico = documento.getString("nome") ?: ""
+                val usuarioPublico = documento.getString("usuario") ?: ""
+
+                if (nomePublico.isNotBlank() && usuarioPublico.isNotBlank()) {
+                    sincronizarPerfilPublico(
+                        usuarioAtual.uid,
+                        nomePublico,
+                        usuarioPublico
+                    )
+                }
+
             }
             .addOnFailureListener { erro ->
                 Toast.makeText(
@@ -188,6 +200,8 @@ class PerfilActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.tvNomePerfil).text = nome
                     findViewById<TextView>(R.id.tvUsuarioPerfil).text =
                         "@$usuario"
+
+                    sincronizarPerfilPublico(uid,nome,usuario)
 
                     dialog.dismiss()
 
@@ -406,6 +420,31 @@ class PerfilActivity : AppCompatActivity() {
                     campoSenha.error = "Não foi possível confirmar sua senha"
                 }
         }
+    }
+
+
+    private fun sincronizarPerfilPublico(
+        uid: String,
+        nome: String,
+        usuario: String
+    ) {
+        val dados = mapOf(
+            "uid" to uid,
+            "nome" to nome,
+            "usuario" to usuario
+        )
+
+        FirebaseFirestore.getInstance()
+            .collection("usuarios_publicos")
+            .document(uid)
+            .set(dados)
+            .addOnFailureListener { erro ->
+                Toast.makeText(
+                    this,
+                    "Erro ao sincronizar perfil: ${erro.localizedMessage}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
     }
 
 
