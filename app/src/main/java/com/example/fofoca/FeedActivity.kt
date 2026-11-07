@@ -3,6 +3,7 @@ package com.example.fofoca
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,11 +11,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fofoca.databinding.ActivityFeedBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class FeedActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFeedBinding
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +29,7 @@ class FeedActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         if (auth.currentUser == null){
             voltarParaLogin()
@@ -37,37 +42,8 @@ class FeedActivity : AppCompatActivity() {
             insets
         }
 
-        //publicacoes temporárias
-        val posts = listOf(
-            Post(
-                id = "1",
-                autor = "Ana Costa",
-                usuario = "anacosta",
-                conteudo = "Gente, vocês não sabem o que aconteceuhoje na faculdade...",
-                curtidas = 24,
-                comentarios = 8
-            ),
-            Post(
-                id = "2",
-                autor = "Pedro Lima",
-                usuario = "pedrolima",
-                conteudo = "Eu prometi que eu não ia me envolver nessa fofoca, mas preciso contar uma coisa.",
-                curtidas = 15,
-                comentarios = 3
-            ),
-            Post(
-                id = "3",
-                autor = "Marina Souza",
-                usuario = "marinasouza",
-                conteudo = "Alguém mais esperando o fim do semestre? Porque eu já estou para enlouquecer!.",
-                curtidas = 42,
-                comentarios = 12
-            )
-        )
-
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
-        binding.rvPosts.adapter = PostAdapter(posts)
-        binding.tvVazio.visibility = if (posts.isEmpty()) View.VISIBLE else View.GONE
+        binding.rvPosts.adapter = PostAdapter(emptyList())
 
         binding.tvSair.setOnClickListener {
             auth.signOut()
@@ -78,6 +54,52 @@ class FeedActivity : AppCompatActivity() {
             val intent = Intent(this, NovaFofocaActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onResume(){
+        super.onResume()
+        if (auth.currentUser != null) {
+            carregarPosts()
+        }
+    }
+
+    private fun carregarPosts(){
+        binding.tvVazio.text = "Carregando fofocas..."
+        binding.tvVazio.visibility = View.VISIBLE
+        binding.rvPosts.visibility = View.GONE
+
+        db.collection("posts").orderBy("criadoEm", Query.Direction.DESCENDING)
+            .get().addOnSuccessListener(this) { resultado ->
+                val posts = resultado.documents.map {documento ->
+                    Post(
+                        id = documento.id,
+                        autorId = documento.getString("autorId") ?: "",
+                        autor = documento.getString("autor") ?: "",
+                        usuario = documento.getString("usuario") ?: "",
+                        conteudo = documento.getString("conteudo") ?: "",
+                        curtidas = documento.getLong("curtidas")?.toInt() ?: 0,
+                        comentarios = documento.getLong("comentarios")?.toInt() ?: 0
+                    )
+                }
+
+                binding.rvPosts.adapter = PostAdapter(posts)
+
+                if (posts.isEmpty()) {
+                    binding.tvVazio.text = "Ainda não há fofocas aqui."
+                    binding.tvVazio.visibility = View.VISIBLE
+                    binding.rvPosts.visibility = View.GONE
+                } else {
+                    binding.tvVazio.visibility = View.GONE
+                    binding.rvPosts.visibility = View.VISIBLE
+                }
+            }
+            .addOnFailureListener(this) { erro ->
+                binding.tvVazio.text = "Não foi possível carregar as fofocas."
+                binding.tvVazio.visibility = View.VISIBLE
+                binding.rvPosts.visibility = View.GONE
+
+                Toast.makeText(this, "Erro: ${erro.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
     }
 
     private fun voltarParaLogin(){
