@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog
 import java.util.Locale
 import android.text.InputType
 import com.google.firebase.auth.EmailAuthProvider
+import android.util.Patterns
 
 class PerfilActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +42,8 @@ class PerfilActivity : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.tvAlterarSenha).setOnClickListener { alterarSenha() }
+
+        findViewById<TextView>(R.id.tvAlterarEmail).setOnClickListener { alterarEmail() }
 
         val usuarioAtual = FirebaseAuth.getInstance().currentUser
 
@@ -76,6 +79,41 @@ class PerfilActivity : AppCompatActivity() {
             }
 
 
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        val usuario = FirebaseAuth.getInstance().currentUser ?: return
+
+        usuario.reload().addOnSuccessListener {
+
+            val emailConfirmado = usuario.email ?: return@addOnSuccessListener
+
+            findViewById<TextView>(R.id.tvEmailPerfil).text =
+                emailConfirmado
+
+            val perfilRef = FirebaseFirestore.getInstance()
+                .collection("usuarios")
+                .document(usuario.uid)
+
+            perfilRef.get().addOnSuccessListener { documento ->
+
+                if (documento.exists() &&
+                    documento.getString("email") != emailConfirmado) {
+
+                    perfilRef.update("email", emailConfirmado)
+                        .addOnFailureListener { erro ->
+                            Toast.makeText(
+                                this,
+                                "Erro ao sincronizar e-mail: ${erro.localizedMessage}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                }
+            }
+        }
     }
 
 
@@ -268,6 +306,104 @@ class PerfilActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     botaoSalvar.isEnabled = true
                     senhaAtual.error = "Senha atual incorreta ou autenticação falhou"
+                }
+        }
+    }
+
+
+    private fun alterarEmail() {
+
+        val usuario = FirebaseAuth.getInstance().currentUser ?: return
+        val emailAtual = usuario.email ?: return
+
+        val campoEmail = EditText(this).apply {
+            hint = "Novo e-mail"
+            inputType = InputType.TYPE_CLASS_TEXT or
+                    InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            setSingleLine(true)
+        }
+
+        val campoSenha = EditText(this).apply {
+            hint = "Senha atual"
+            inputType = InputType.TYPE_CLASS_TEXT or
+                    InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+        val campos = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(32, 16, 32, 8)
+            addView(campoEmail)
+            addView(campoSenha)
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Alterar e-mail")
+            .setMessage("Enviaremos uma confirmação para o novo endereço.")
+            .setView(campos)
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Continuar", null)
+            .create()
+
+        dialog.show()
+
+        val botaoSalvar = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+
+        botaoSalvar.setOnClickListener {
+
+            val novoEmail = campoEmail.text.toString()
+                .trim()
+                .lowercase(Locale.ROOT)
+
+            val senha = campoSenha.text.toString()
+
+            if (!Patterns.EMAIL_ADDRESS.matcher(novoEmail).matches()) {
+                campoEmail.error = "Informe um e-mail válido"
+                return@setOnClickListener
+            }
+
+            if (novoEmail == emailAtual.lowercase(Locale.ROOT)) {
+                campoEmail.error = "Informe um e-mail diferente"
+                return@setOnClickListener
+            }
+
+            if (senha.isEmpty()) {
+                campoSenha.error = "Informe sua senha atual"
+                return@setOnClickListener
+            }
+
+            botaoSalvar.isEnabled = false
+
+            val credencial = EmailAuthProvider.getCredential(
+                emailAtual,
+                senha
+            )
+
+            usuario.reauthenticate(credencial)
+                .addOnSuccessListener {
+
+                    usuario.verifyBeforeUpdateEmail(novoEmail)
+                        .addOnSuccessListener {
+                            dialog.dismiss()
+
+                            Toast.makeText(
+                                this,
+                                "Confira seu novo e-mail para confirmar a alteração!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        .addOnFailureListener { erro ->
+                            botaoSalvar.isEnabled = true
+
+                            Toast.makeText(
+                                this,
+                                "Erro: ${erro.localizedMessage}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                }
+                .addOnFailureListener {
+                    botaoSalvar.isEnabled = true
+                    campoSenha.error = "Não foi possível confirmar sua senha"
                 }
         }
     }
