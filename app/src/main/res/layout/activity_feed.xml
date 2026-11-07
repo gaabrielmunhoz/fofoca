@@ -24,6 +24,17 @@
             android:textColor="@color/fofoca_rosa"/>
 
         <TextView
+            android:id="@+id/tvPerfil"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="Perfil"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/fofoca_rosa"/>
+
+        <TextView
             android:id="@+id/tvSair"
             android:layout_width="wrap_content"
             android:layout_height="48dp"

@@ -54,6 +54,11 @@ class FeedActivity : AppCompatActivity() {
             voltarParaLogin()
         }
 
+        binding.tvPerfil.setOnClickListener {
+            val intent = Intent(this, PerfilActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.btnNovaFofoca.setOnClickListener {
             val intent = Intent(this, NovaFofocaActivity::class.java)
             startActivity(intent)
