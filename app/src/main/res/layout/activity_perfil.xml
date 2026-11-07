@@ -51,4 +51,32 @@
         android:textSize="14sp"
         android:textColor="@color/fofoca_secundario"/>
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Minhas fofocas"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/fofoca_texto"/>
+
+    <TextView
+        android:id="@+id/tvSemPostsPerfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Nenhuma fofoca publicada ainda."
+        android:textSize="14sp"
+        android:textColor="@color/fofoca_secundario"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPostsPerfil"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"/>
+
 </LinearLayout>
