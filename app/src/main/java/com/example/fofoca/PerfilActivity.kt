@@ -71,7 +71,7 @@ class PerfilActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvAlterarSenha).visibility = visibilidade
         findViewById<TextView>(R.id.tvAlterarEmail).visibility = visibilidade
         findViewById<TextView>(R.id.tvExcluirConta).visibility = visibilidade
-        findViewById<TextView>(R.id.layoutAcoesPerfil).visibility = visibilidade
+        findViewById<LinearLayout>(R.id.layoutAcoesPerfil).visibility = visibilidade
 
         findViewById<TextView>(R.id.tvEmailPerfil).text =
             usuarioAtual.email ?: ""
