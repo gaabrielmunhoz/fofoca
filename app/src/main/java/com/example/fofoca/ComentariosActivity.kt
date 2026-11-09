@@ -38,9 +38,13 @@ class ComentariosActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnEnviar).setOnClickListener { publicarComentario(postId) }
 
+        val margem = (16 * resources.displayMetrics.density).toInt()
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val barras = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val teclado = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            v.setPadding(margem + barras.left, margem + barras.top, margem + barras.right, margem + maxOf(barras.bottom, teclado.bottom))
             insets
         }
     }

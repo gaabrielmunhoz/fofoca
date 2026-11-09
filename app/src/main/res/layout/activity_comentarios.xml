@@ -40,14 +40,19 @@
 
         <EditText
             android:id="@+id/etComentario"
-            android:layout_width="0dp"
+            android:layout_width="10dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Escreva um comentário..."
             android:inputType="textCapSentences|textMultiLine"
             android:maxLength="300"
             android:textColor="@color/fofoca_texto"
-            android:textColorHint="@color/fofoca_secundario"/>
+            android:textColorHint="@color/fofoca_secundario"
+            android:background="@drawable/bg_campo_fofoca"
+            android:layout_marginEnd="5dp"
+            android:padding="16dp"
+            android:minLines="1"
+            android:maxLines="3"/>
 
         <Button
             android:id="@+id/btnEnviar"

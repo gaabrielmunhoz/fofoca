@@ -56,10 +56,10 @@
             android:hint="Nome e sobrenome"
             android:inputType="textPersonName"
             android:singleLine="true"
-            android:padding="12dp"
+            android:padding="16dp"
             android:textColor="@color/fofoca_texto"
             android:textColorHint="@color/fofoca_secundario"
-            android:backgroundTint="@color/fofoca_rosa"/>
+            android:background="@drawable/bg_campo_fofoca"/>
 
         <EditText
             android:id="@+id/etUsuario"
@@ -68,11 +68,11 @@
             android:hint="Escolha seu @usuário"
             android:inputType="text"
             android:singleLine="true"
-            android:padding="12dp"
+            android:padding="16dp"
             android:layout_marginTop="12dp"
             android:textColor="@color/fofoca_texto"
             android:textColorHint="@color/fofoca_secundario"
-            android:backgroundTint="@color/fofoca_rosa"/>
+            android:background="@drawable/bg_campo_fofoca"/>
 
         <EditText
             android:id="@+id/etEmail"
@@ -81,11 +81,11 @@
             android:hint="E-mail"
             android:inputType="textEmailAddress"
             android:singleLine="true"
-            android:padding="12dp"
+            android:padding="16dp"
             android:layout_marginTop="12dp"
             android:textColor="@color/fofoca_texto"
             android:textColorHint="@color/fofoca_secundario"
-            android:backgroundTint="@color/fofoca_rosa"/>
+            android:background="@drawable/bg_campo_fofoca"/>
 
         <EditText
             android:id="@+id/etSenha"
@@ -94,10 +94,11 @@
             android:hint="Senha"
             android:inputType="textPassword"
             android:singleLine="true"
-            android:padding="12dp"
+            android:padding="16dp"
             android:layout_marginTop="12dp"
-            android:textColor="@color/fofoca_secundario"
-            android:backgroundTint="@color/fofoca_rosa"/>
+            android:textColor="@color/fofoca_texto"
+            android:textColorHint="@color/fofoca_secundario"
+            android:background="@drawable/bg_campo_fofoca"/>
 
         <EditText
             android:id="@+id/etConfirmarSenha"
@@ -106,10 +107,11 @@
             android:hint="Confirmar senha"
             android:inputType="textPassword"
             android:singleLine="true"
-            android:padding="12dp"
+            android:padding="16dp"
             android:layout_marginTop="12dp"
-            android:textColor="@color/fofoca_secundario"
-            android:backgroundTint="@color/fofoca_rosa"/>
+            android:textColor="@color/fofoca_texto"
+            android:textColorHint="@color/fofoca_secundario"
+            android:background="@drawable/bg_campo_fofoca"/>
 
         <Button
             android:id="@+id/btnCadastrar"

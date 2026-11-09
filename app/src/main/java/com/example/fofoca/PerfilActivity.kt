@@ -30,9 +30,11 @@ class PerfilActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_perfil)
+        val margem = (20 * resources.displayMetrics.density).toInt()
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val barras = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(margem + barras.left, margem + barras.top, margem + barras.right, margem + barras.bottom)
             insets
         }
 

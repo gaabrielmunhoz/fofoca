@@ -33,8 +33,10 @@
         <EditText
             android:id="@+id/etConteudo"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:gravity="top"
+            android:layout_height="wrap_content"
+            android:minHeight="160dp"
+            android:minLines="6"
+            android:gravity="top|start"
             android:padding="16dp"
             android:hint="Escreva sua fofoca aqui..."
             android:inputType="textCapSentences|textMultiLine"
@@ -42,7 +44,7 @@
             android:textSize="16sp"
             android:textColor="@color/fofoca_texto"
             android:textColorHint="@color/fofoca_secundario"
-            android:backgroundTint="@color/fofoca_rosa"/>
+            android:background="@drawable/bg_campo_fofoca"/>
 
         <Button
             android:id="@+id/btnPublicar"

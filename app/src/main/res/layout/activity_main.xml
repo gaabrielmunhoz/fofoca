@@ -58,7 +58,7 @@
             android:singleLine="true"
             android:padding="12dp"
             android:textColor="@color/fofoca_secundario"
-            android:backgroundTint="@color/fofoca_rosa"/>
+            android:background="@drawable/bg_campo_fofoca"/>
 
         <EditText
             android:id="@+id/etSenha"
@@ -69,7 +69,7 @@
             android:singleLine="true"
             android:padding="12dp"
             android:textColor="@color/fofoca_secundario"
-            android:backgroundTint="@color/fofoca_rosa"
+            android:background="@drawable/bg_campo_fofoca"
             android:layout_marginTop="16dp"/>
 
         <Button
