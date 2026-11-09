@@ -57,7 +57,8 @@
                 android:layout_weight="1"
                 android:text="0 curtidas"
                 android:textSize="13sp"
-                android:textColor="@color/fofoca_secundario"/>
+                android:textColor="@color/fofoca_secundario"
+                android:drawablePadding="6dp"/>
 
             <TextView
                 android:id="@+id/tvComentarios"
@@ -66,7 +67,10 @@
                 android:layout_weight="1"
                 android:text="0 comentários"
                 android:textSize="13sp"
-                android:textColor="@color/fofoca_secundario"/>
+                android:textColor="@color/fofoca_secundario"
+                android:drawableStart="@drawable/ic_comentario"
+                android:drawableTint="@color/fofoca_secundario"
+                android:drawablePadding="6dp"/>
 
         </LinearLayout>
 
