@@ -86,6 +86,17 @@
         android:textColor="@color/fofoca_rosa"/>
 
     <TextView
+        android:id="@+id/tvExcluirConta"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
+        android:text="Excluir conta"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#D32f2f"/>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"

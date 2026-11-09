@@ -20,6 +20,10 @@ import java.util.Locale
 import android.text.InputType
 import com.google.firebase.auth.EmailAuthProvider
 import android.util.Patterns
+import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentSnapshot
 
 class PerfilActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +49,8 @@ class PerfilActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.tvAlterarEmail).setOnClickListener { alterarEmail() }
 
+        findViewById<TextView>(R.id.tvExcluirConta).setOnClickListener { excluirConta() }
+
         val usuarioAtual = FirebaseAuth.getInstance().currentUser
 
         if (usuarioAtual == null) {
@@ -62,6 +68,7 @@ class PerfilActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvEditarPerfil).visibility = visibilidade
         findViewById<TextView>(R.id.tvAlterarSenha).visibility = visibilidade
         findViewById<TextView>(R.id.tvAlterarEmail).visibility = visibilidade
+        findViewById<TextView>(R.id.tvExcluirConta).visibility = visibilidade
 
         findViewById<TextView>(R.id.tvEmailPerfil).text =
             usuarioAtual.email ?: ""
@@ -511,6 +518,179 @@ class PerfilActivity : AppCompatActivity() {
                     "Erro ao buscar posts: ${erro.localizedMessage}",
                     Toast.LENGTH_LONG
                 ).show()
+            }
+    }
+
+
+    private fun excluirConta() {
+
+        val usuario = FirebaseAuth.getInstance().currentUser ?: return
+        val email = usuario.email ?: return
+
+        val campoSenha = EditText(this).apply {
+            hint = "Senha atual"
+            inputType = InputType.TYPE_CLASS_TEXT or
+                    InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Excluir minha conta?")
+            .setMessage(
+                "Sua conta, publicações, comentários e curtidas serão excluídos. " +
+                        "Esta ação não pode ser desfeita."
+            )
+            .setView(campoSenha)
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Excluir definitivamente", null)
+            .create()
+
+        dialog.show()
+
+        val botao = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+
+        botao.setOnClickListener {
+
+            val senha = campoSenha.text.toString()
+
+            if (senha.isBlank()) {
+                campoSenha.error = "Informe sua senha"
+                return@setOnClickListener
+            }
+
+            botao.isEnabled = false
+
+            val credencial = EmailAuthProvider.getCredential(email, senha)
+
+            usuario.reauthenticate(credencial)
+                .addOnSuccessListener {
+
+                    limparDadosConta(usuario.uid)
+                        .addOnSuccessListener {
+
+                            usuario.delete()
+                                .addOnSuccessListener {
+                                    dialog.dismiss()
+
+                                    FirebaseAuth.getInstance().signOut()
+
+                                    val intent = Intent(
+                                        this,
+                                        MainActivity::class.java
+                                    )
+
+                                    intent.flags =
+                                        Intent.FLAG_ACTIVITY_NEW_TASK or
+                                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+                                    startActivity(intent)
+                                    finish()
+                                }
+                                .addOnFailureListener { erro ->
+                                    botao.isEnabled = true
+                                    Toast.makeText(
+                                        this,
+                                        "Erro ao excluir autenticação: ${erro.localizedMessage}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                        }
+                        .addOnFailureListener { erro ->
+                            botao.isEnabled = true
+                            Toast.makeText(
+                                this,
+                                "Falha na limpeza dos dados: ${erro.localizedMessage}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                }
+                .addOnFailureListener {
+                    botao.isEnabled = true
+                    campoSenha.error = "Não foi possível confirmar sua senha"
+                }
+        }
+    }
+
+
+    private fun apagarDocumentos(
+        colecao: CollectionReference,
+        incluir: (DocumentSnapshot) -> Boolean
+    ): Task<Void> {
+
+        return colecao.get().continueWithTask { consulta ->
+
+            if (!consulta.isSuccessful) {
+                Tasks.forException<Void>(
+                    consulta.exception ?: Exception("Erro na consulta")
+                )
+            } else {
+                val exclusoes = consulta.result.documents
+                    .filter(incluir)
+                    .map { it.reference.delete() }
+
+                Tasks.whenAll(exclusoes)
+            }
+        }
+    }
+
+    private fun limparDadosConta(uid: String): Task<Void> {
+
+        val db = FirebaseFirestore.getInstance()
+
+        return db.collection("posts").get()
+            .continueWithTask { consulta ->
+
+                if (!consulta.isSuccessful) {
+                    return@continueWithTask Tasks.forException<Void>(
+                        consulta.exception ?: Exception("Erro ao buscar posts")
+                    )
+                }
+
+                val tarefas = consulta.result.documents.map { post ->
+
+                    val meuPost = post.getString("autorId") == uid
+
+                    val comentarios = apagarDocumentos(
+                        post.reference.collection("comentarios")
+                    ) { documento ->
+                        meuPost || documento.getString("autorId") == uid
+                    }
+
+                    val curtidas = apagarDocumentos(
+                        post.reference.collection("curtidas")
+                    ) { documento ->
+                        meuPost || documento.id == uid
+                    }
+
+                    Tasks.whenAll(comentarios, curtidas)
+                        .continueWithTask { resultado ->
+
+                            if (!resultado.isSuccessful) {
+                                Tasks.forException<Void>(
+                                    resultado.exception
+                                        ?: Exception("Erro ao limpar publicação")
+                                )
+                            } else if (meuPost) {
+                                post.reference.delete()
+                            } else {
+                                Tasks.forResult<Void>(null)
+                            }
+                        }
+                }
+
+                Tasks.whenAll(tarefas)
+            }
+            .continueWithTask { limpeza ->
+
+                if (!limpeza.isSuccessful) {
+                    return@continueWithTask Tasks.forException<Void>(
+                        limpeza.exception ?: Exception("Erro na limpeza")
+                    )
+                }
+
+                Tasks.whenAll(
+                    db.collection("usuarios_publicos").document(uid).delete(),
+                    db.collection("usuarios").document(uid).delete()
+                )
             }
     }
 
