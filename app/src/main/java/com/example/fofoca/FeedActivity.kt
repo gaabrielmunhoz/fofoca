@@ -297,8 +297,16 @@ class FeedActivity : AppCompatActivity() {
 
                                 AlertDialog.Builder(this)
                                     .setTitle("Usuários encontrados")
-                                    .setMessage(nomes.joinToString("\n\n"))
-                                    .setPositiveButton("Fechar", null)
+                                    .setItems(nomes.toTypedArray()) { _, indice ->
+
+                                        val uidEncontrado = resultado.documents[indice].id
+
+                                        val intent = Intent(this, PerfilActivity::class.java)
+                                        intent.putExtra("USUARIO_ID", uidEncontrado)
+
+                                        startActivity(intent)
+                                    }
+                                    .setNegativeButton("Fechar", null)
                                     .show()
                             }
                         }

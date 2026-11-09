@@ -52,15 +52,26 @@ class PerfilActivity : AppCompatActivity() {
             return
         }
 
+        val uidPerfil = intent.getStringExtra("USUARIO_ID") ?: usuarioAtual.uid
+
+        val meuPerfil = uidPerfil == usuarioAtual.uid
+
+        val visibilidade = if (meuPerfil) View.VISIBLE else View.GONE
+
+        findViewById<TextView>(R.id.tvEmailPerfil).visibility = visibilidade
+        findViewById<TextView>(R.id.tvEditarPerfil).visibility = visibilidade
+        findViewById<TextView>(R.id.tvAlterarSenha).visibility = visibilidade
+        findViewById<TextView>(R.id.tvAlterarEmail).visibility = visibilidade
+
         findViewById<TextView>(R.id.tvEmailPerfil).text =
             usuarioAtual.email ?: ""
         findViewById<RecyclerView>(R.id.rvPostsPerfil).layoutManager=
             LinearLayoutManager(this)
-        carregarPostsPerfil(usuarioAtual.uid)
+        carregarPostsPerfil(uidPerfil)
 
         FirebaseFirestore.getInstance()
-            .collection("usuarios")
-            .document(usuarioAtual.uid)
+            .collection(if (meuPerfil) "usuarios" else "usuarios_publicos")
+            .document(uidPerfil)
             .get()
             .addOnSuccessListener { documento ->
 
@@ -73,7 +84,7 @@ class PerfilActivity : AppCompatActivity() {
                 val nomePublico = documento.getString("nome") ?: ""
                 val usuarioPublico = documento.getString("usuario") ?: ""
 
-                if (nomePublico.isNotBlank() && usuarioPublico.isNotBlank()) {
+                if (meuPerfil && nomePublico.isNotBlank() && usuarioPublico.isNotBlank()) {
                     sincronizarPerfilPublico(
                         usuarioAtual.uid,
                         nomePublico,
