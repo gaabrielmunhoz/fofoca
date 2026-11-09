@@ -66,11 +66,12 @@ class PerfilActivity : AppCompatActivity() {
 
         val visibilidade = if (meuPerfil) View.VISIBLE else View.GONE
 
-        findViewById<TextView>(R.id.tvEmailPerfil).visibility = visibilidade
+        findViewById<TextView>(R.id.tvEmailPerfil).visibility = View.GONE
         findViewById<TextView>(R.id.tvEditarPerfil).visibility = visibilidade
         findViewById<TextView>(R.id.tvAlterarSenha).visibility = visibilidade
         findViewById<TextView>(R.id.tvAlterarEmail).visibility = visibilidade
         findViewById<TextView>(R.id.tvExcluirConta).visibility = visibilidade
+        findViewById<TextView>(R.id.layoutAcoesPerfil).visibility = visibilidade
 
         findViewById<TextView>(R.id.tvEmailPerfil).text =
             usuarioAtual.email ?: ""
