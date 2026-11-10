@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
+import android.content.Intent
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -112,6 +113,11 @@ class CadastroActivity : AppCompatActivity() {
         db.collection("usuarios").document(uid).set(dados).addOnSuccessListener {
             auth.signOut()
             mostrarMensagem("Usuário cadastrado com sucesso!")
+
+            val intent = Intent(this, PerfilActivity::class.java)
+
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
             finish()
         }
             .addOnFailureListener { erro ->
