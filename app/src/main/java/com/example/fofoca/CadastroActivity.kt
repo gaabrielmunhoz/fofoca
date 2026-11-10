@@ -111,7 +111,6 @@ class CadastroActivity : AppCompatActivity() {
         )
 
         db.collection("usuarios").document(uid).set(dados).addOnSuccessListener {
-            auth.signOut()
             mostrarMensagem("Usuário cadastrado com sucesso!")
 
             val intent = Intent(this, PerfilActivity::class.java)
