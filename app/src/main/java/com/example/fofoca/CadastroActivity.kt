@@ -13,6 +13,8 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
 import android.content.Intent
+import android.graphics.Rect
+import android.widget.EditText
 
 class CadastroActivity : AppCompatActivity() {
 
@@ -28,9 +30,42 @@ class CadastroActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
-            val barras = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val teclado = insets.getInsets(WindowInsetsCompat.Type.ime())
-            view.setPadding(barras.left, barras.top, barras.right, maxOf(barras.bottom, teclado.bottom))
+
+            val barras = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
+
+            val teclado = insets.getInsets(
+                WindowInsetsCompat.Type.ime()
+            )
+
+            view.setPadding(
+                barras.left,
+                barras.top,
+                barras.right,
+                maxOf(barras.bottom, teclado.bottom)
+            )
+
+            if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
+
+                binding.main.post {
+
+                    val campo = currentFocus as? EditText
+
+                    if (campo != null) {
+
+                        val area = Rect(
+                            0,
+                            0,
+                            campo.width,
+                            campo.height
+                        )
+
+                        campo.requestRectangleOnScreen(area, true)
+                    }
+                }
+            }
+
             insets
         }
 
